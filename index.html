@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>VoteVerity AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f5f6fb;--card:#fff;--tx:#161a2e;--mu:#5d6483;--ac:#4f46e5;--bd:#e3e6f2;--ok:#16a34a;--er:#dc2626;--sel:#eef0ff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1020;--card:#171a30;--tx:#eceefb;--mu:#9aa1c5;--ac:#818cf8;--bd:#2a2e4d;--ok:#4ade80;--er:#f87171;--sel:#22264a}}
+:root[data-theme="dark"]{--bg:#0e1020;--card:#171a30;--tx:#eceefb;--mu:#9aa1c5;--ac:#818cf8;--bd:#2a2e4d;--ok:#4ade80;--er:#f87171;--sel:#22264a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--bd)}
+.nav{max-width:1000px;margin:auto;display:flex;align-items:center;gap:8px;padding:10px 16px;flex-wrap:wrap}
+.brand{display:flex;gap:8px;align-items:center;font-weight:800;font-size:19px;margin-right:auto;color:var(--ac)}.brand span{color:var(--tx)}
+main{max-width:1000px;margin:auto;padding:18px 16px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:14px}.card h3{margin:0 0 8px}
+.mu{color:var(--mu);font-size:14px}.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+button,.btnl{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;background:var(--ac);color:#fff;display:inline-flex;gap:6px;align-items:center;justify-content:center}
+button.sec,.btnl{background:var(--sel);color:var(--ac)}button.dng{background:var(--er)}button.ok{background:var(--ok);color:#fff}button:disabled{opacity:.4;cursor:not-allowed}
+input,select{font:inherit;width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);margin:4px 0 12px}
+input[type=checkbox]{width:18px;height:18px;margin:0}label{font-size:13px;font-weight:700;color:var(--mu)}.chk{display:flex;gap:8px;align-items:center}
+.f{position:relative;margin:4px 0 12px}.f input{margin:0;padding-left:40px;padding-right:44px}.f>svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mu)}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;color:var(--mu);padding:6px}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;background:var(--sel);color:var(--ac)}
+.p-open,.p-approved{background:#dcfce7;color:#166534}.p-closed,.p-rejected{background:#fee2e2;color:#991b1b}.p-upcoming,.p-pending{background:#fef3c7;color:#92400e}
+.msg{padding:10px 12px;border-radius:10px;margin-bottom:12px;font-size:14px}.msg.e{background:#fee2e2;color:#991b1b}.msg.s{background:#dcfce7;color:#166534}.msg.i{background:var(--sel);color:var(--ac)}
+.auth{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:start}@media(max-width:780px){.auth{grid-template-columns:1fr}}
+.hero{background:linear-gradient(135deg,#4f46e5,#0ea5a4);color:#fff;border-radius:18px;padding:26px}.hero h1{margin:0 0 6px;font-size:28px}
+.rc{display:flex;gap:12px;align-items:center;background:#ffffff22;border-radius:12px;padding:12px;margin-top:10px}.rc small{display:block;opacity:.85}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.role{flex-direction:column;background:var(--bg);color:var(--mu);border:2px solid var(--bd)}.role.on{border-color:var(--ac);background:var(--sel);color:var(--ac)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.av{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--sel);color:var(--ac);display:inline-grid;place-items:center;font-weight:800;flex:none}.av.lg{width:96px;height:96px;font-size:30px}
+.ph{width:96px;height:96px;border-radius:50%;border:2px dashed var(--ac);display:grid;place-items:center;margin:0 auto 12px;cursor:pointer;overflow:hidden;color:var(--ac);text-align:center}.ph img{width:100%;height:100%;object-fit:cover}
+.opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}.opt{text-align:left;display:block;background:var(--card);color:var(--tx);border:2px solid var(--bd);padding:14px}.opt.sel{border-color:var(--ac);background:var(--sel)}.opt small{display:block;color:var(--mu);font-weight:500}
+.bar{height:12px;border-radius:99px;background:var(--bd);overflow:hidden;margin:4px 0 10px}.bar i{display:block;height:100%;background:var(--ac)}.bar i.w{background:var(--ok)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px;flex-wrap:wrap}
+code{background:var(--sel);padding:2px 6px;border-radius:6px;word-break:break-all}.big{font-size:30px;font-weight:800}
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);z-index:99;display:grid;place-items:center;padding:16px}
+.modal{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px;max-width:440px;width:100%;box-shadow:0 12px 30px rgba(0,0,0,0.25)}
+</style></head><body>
+<header><div class="nav" id="nav"></div></header><main id="app"></main>
+<div id="modalRoot"></div>
+<script>
+/* =====================================================================
+   VoteVerity AI – Frontend (Connected to Node/Express/MySQL Backend)
+   ===================================================================== */
+
+/* ---------- 1. ICONS & STATE ---------- */
+const P={
+ student:'<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>',
+ admin:'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+ voter:'<rect x="3" y="12" width="18" height="9" rx="2"/><path d="M8 12V4h8v8"/><path d="M10 8l1.5 1.5L14 7"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+ id:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c1-2 5-2 6 0M15 10h3M15 14h3"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+ phone:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
+ camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ dept:'<path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/>',
+ key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
+ edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+ brain:'<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/>'
+};
+const I=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[n]||P.user}</svg>`;
+
+let session = null;
+let token = localStorage.getItem('vv_token') || null;
+let area = 'student', page = 'home', msg = null, authMode = 'login', lrole = 'student';
+let sel = {}, review = false, receipt = null, flt = 'all', chosen = new Set(), searchQuery = '';
+let POSTS = [], cands = [], election = { status: 'open', title: 'College Election' };
+let adminStudents = [], adminCounts = { all: 0, pending: 0, approved: 0, rejected: 0 };
+let editingProfile = false, reg = { photo: '' }, loading = false;
+let confirmModal = null; // { title, text, onConfirm }
+
+/* ---------- 2. HELPERS & API CLIENT ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const M = () => msg ? `<div class="msg ${msg.k}">${esc(msg.t)}</div>` : '';
+const setMsg = (t, k) => { msg = { t, k }; render(); };
+const fm = (t, k) => { const e = $('#fm'); e ? e.innerHTML = `<div class="msg ${k}">${esc(t)}</div>` : setMsg(t, k); };
+const pill = () => `<span class="pill p-${election.status}">${{ open: 'Voting open', closed: 'Closed', upcoming: 'Not started' }[election.status] || election.status}</span>`;
+const me = () => session || {};
+const av = (s, cls = '') => s && s.photo ? `<img class="av ${cls}" src="${s.photo}" alt="${esc(s.name)}">` : `<span class="av ${cls}">${esc((s && s.name ? s.name : 'U').split(' ').map(w => w[0]).slice(0, 2).join(''))}</span>`;
+const candName = id => id === 'nota' ? 'NOTA' : (cands.find(c => String(c.id) === String(id)) || { name: '?' }).name;
+const turnout = () => `${election.totalBallots || 0} of ${election.approvedVoters || 0} approved voters have voted`;
+const go = (a, p) => { area = a; page = p; msg = null; review = false; editingProfile = false; render(); loadPageData(); };
+const tg = id => { const i = $('#' + id); if (i) i.type = i.type === 'password' ? 'text' : 'password'; };
+
+function resize(file) {
+  return new Promise((ok, no) => {
+    if (!file || !file.type.startsWith('image/') || file.size > 8e6) return no();
+    const r = new FileReader();
+    r.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = c.height = 160;
+        const m = Math.min(im.width, im.height);
+        c.getContext('2d').drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, 160, 160);
+        ok(c.toDataURL('image/jpeg', 0.8));
+      };
+      im.onerror = no;
+      im.src = r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+const fld = (id, lab, ic, val = '', type = 'text', x = '', eye = false) => `<label>${lab}</label><div class="f">${I(ic, 18)}<input id="${id}" type="${type}" value="${esc(val)}" ${x}>${eye ? `<button type="button" class="eye" onclick="tg('${id}')" aria-label="Show or hide password">${I('eye', 18)}</button>` : ''}</div>`;
+
+// Robust Backend API Client
+async function api(path, method = 'GET', body = null) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  try {
+    const res = await fetch(path, opts);
+    const data = await res.json().catch(() => ({ success: false, message: 'Server communication error.' }));
+    if (res.status === 401 && token) {
+      token = null;
+      session = null;
+      localStorage.removeItem('vv_token');
+      render();
+    }
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    return { ok: false, status: 0, data: { success: false, message: 'Cannot connect to backend server. Make sure server.js is running.' } };
+  }
+}
+
+/* ---------- 3. NAVIGATION & SCREEN BUILDER ---------- */
+const DASH = {
+  student: {
+    title: 'Student dashboard',
+    icon: 'student',
+    tabs: [
+      ['home', '🏠 Home', stHome],
+      ['cands', '👥 Candidates', stCands],
+      ['profile', '👤 Profile', stProfile],
+      ['results', '📊 Results', resultsScreen]
+    ]
+  },
+  voter: {
+    title: 'Voter dashboard',
+    icon: 'voter',
+    tabs: [
+      ['booth', '🗳️ Voting booth', vBooth],
+      ['verify', '🧾 Verify receipt', vVerify]
+    ]
+  },
+  admin: {
+    title: 'Admin dashboard',
+    icon: 'admin',
+    tabs: [
+      ['over', '📋 Overview', adOver],
+      ['cands', '👥 Candidates', adCands],
+      ['stud', '🎓 Students', adStud],
+      ['res', '📊 Results', adRes],
+      ['sec', '🔒 Profile & Security', adSec]
+    ]
+  }
+};
+
+function render() {
+  let top = `<div class="brand">${I('admin', 26)}<span>Vote<b style="color:var(--ac)">Verity</b> AI</span></div>`;
+  if (session) {
+    top += session.role === 'admin'
+      ? `${adAv()}<span class="pill">Admin</span>`
+      : `${av(session)}<b>${esc(session.name)}</b>`;
+    if (session.role === 'student' && session.approval_status === 'approved') {
+      top += `<button class="sec" onclick="go('student','home')">${I('student', 16)}Student</button><button class="sec" onclick="go('voter','booth')">${I('voter', 16)}Voter</button>`;
+    }
+    top += `<button class="dng" onclick="logout()">Logout</button>`;
+  }
+  $('#nav').innerHTML = top;
+
+  if (!session) {
+    $('#app').innerHTML = authScreen();
+    $('#modalRoot').innerHTML = '';
+    return;
+  }
+
+  const d = DASH[area] || DASH.student;
+  const cur = d.tabs.find(t => t[0] === page) || d.tabs[0];
+  $('#app').innerHTML = `<h2 style="margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap">${I(d.icon, 26)}${d.title} ${pill()}</h2><div class="tabs">${d.tabs.map(t => `<button class="${cur[0] === t[0] ? '' : 'sec'}" onclick="go('${area}','${t[0]}')">${t[1]}</button>`).join('')}</div>${M()}${cur[2]()}`;
+
+  renderModal();
+}
+
+function renderModal() {
+  const root = $('#modalRoot');
+  if (!confirmModal) { root.innerHTML = ''; return; }
+  root.innerHTML = `<div class="modal-bg"><div class="modal"><h3>${esc(confirmModal.title)}</h3><p class="mu">${esc(confirmModal.text)}</p><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="sec" onclick="closeModal()">Cancel</button><button class="ok" onclick="confirmModal.onConfirm();closeModal()">Confirm</button></div></div></div>`;
+}
+function closeModal() { confirmModal = null; renderModal(); }
+
+/* ---------- 4. AUTHENTICATION (NO OTP) ---------- */
+function authScreen() {
+  const hero = `<div class="hero"><h1>VoteVerity AI</h1><p>Secure, verified college elections powered by MySQL &amp; AI analytics.</p>${[['student', 'Student', 'Register directly, track your status, cast secret ballot'], ['voter', 'Voter', 'Cast one tamper-evident ballot verified by hash chain'], ['admin', 'Admin', 'Approve voters, manage candidates, and oversee election']].map(r => `<div class="rc">${I(r[0], 34)}<div><b>${r[1]}</b><small>${r[2]}</small></div></div>`).join('')}</div>`;
+  return `<div class="auth">${hero}<div class="card">${authMode === 'login' ? loginForm() : regForm()}</div></div>`;
+}
+
+function loginForm() {
+  return `<h2 style="margin-top:0">Sign in</h2><div class="roles">${[['student', 'Student / Voter'], ['admin', 'Admin']].map(r => `<button type="button" class="role ${lrole === r[0] ? 'on' : ''}" onclick="lrole='${r[0]}';render()">${I(r[0], 28)}${r[1]}</button>`).join('')}</div><div id="fm">${M()}</div>
+  <form onsubmit="doLogin(event)">${fld('r', lrole === 'admin' ? 'Username' : 'Roll number', lrole === 'admin' ? 'admin' : 'id', lrole === 'admin' ? 'admin' : '', 'text', 'required')}${fld('p', 'Password', 'lock', '', 'password', 'required', true)}<button style="width:100%" ${loading ? 'disabled' : ''}>${loading ? 'Signing in...' : 'Sign in'}</button></form>
+  <p class="mu" style="text-align:center"><a style="color:var(--ac);cursor:pointer" onclick="authMode='register';msg=null;render()">New student? Register here</a></p>
+  <p class="mu">Demo student: <code>21CS001</code> / <code>Student@123</code><br>Demo admin: <code>admin</code> / <code>Admin@123</code></p>`;
+}
+
+function regForm() {
+  return `<h2 style="margin-top:0">${I('student', 24)} Student registration</h2><div id="fm">${M()}</div>
+  <form onsubmit="doRegister(event)">
+  <label class="ph" for="pf">${reg.photo ? `<img id="pv" src="${reg.photo}" alt="">` : `<span id="pi">${I('camera', 28)}<small>Photo (optional)</small></span><img id="pv" hidden alt="">`}</label><input type="file" id="pf" accept="image/*" hidden onchange="pickRegPhoto(this)">
+  ${fld('n', 'Full name', 'user', '', 'text', 'required')}${fld('r', 'Roll number', 'id', '', 'text', 'required')}
+  <label>Gender</label><select id="g"><option value="F">Female</option><option value="M">Male</option><option value="Other">Other</option></select>
+  ${fld('d', 'Department', 'dept', '', 'text', 'required')}${fld('sc', 'Class / Section (optional)', 'id', '', 'text', 'placeholder="e.g. TY-CS-A"')}${fld('e', 'Email', 'mail', '', 'email', 'required placeholder="you@college.edu"')}${fld('m', 'Mobile number (+91)', 'phone', '', 'tel', 'required maxlength="10" inputmode="numeric" placeholder="10-digit number"')}
+  ${fld('p', 'Password (min 6)', 'lock', '', 'password', 'required minlength="6" oninput="mt()"', true)}${fld('p2', 'Confirm password', 'lock', '', 'password', 'required oninput="mt()"', true)}<div id="mt" class="mu" style="margin:-6px 0 12px"></div>
+  <button style="width:100%" ${loading ? 'disabled' : ''}>${loading ? 'Registering...' : 'Create account'}</button></form>
+  <p class="mu" style="text-align:center"><a style="color:var(--ac);cursor:pointer" onclick="authMode='login';msg=null;render()">Already registered? Sign in</a></p>`;
+}
+
+function mt() {
+  const a = $('#p').value, b = $('#p2').value;
+  $('#mt').innerHTML = !b ? '' : a === b ? '<span style="color:var(--ok)">✔ Passwords match</span>' : '<span style="color:var(--er)">✖ Passwords do not match</span>';
+}
+
+async function pickRegPhoto(i) {
+  try {
+    reg.photo = await resize(i.files[0]);
+    $('#pv').src = reg.photo;
+    $('#pv').hidden = false;
+    const p = $('#pi'); if (p) p.hidden = true;
+  } catch (e) { fm('Please choose an image under 8 MB.', 'e'); }
+}
+
+async function doRegister(e) {
+  e.preventDefault();
+  const d = {
+    name: $('#n').value.trim(),
+    roll_number: $('#r').value.trim().toUpperCase(),
+    gender: $('#g').value,
+    department: $('#d').value.trim(),
+    student_class: $('#sc') ? $('#sc').value.trim() : '',
+    email: $('#e').value.trim().toLowerCase(),
+    phone: $('#m').value.trim(),
+    password: $('#p').value,
+    photo: reg.photo || null
+  };
+
+  if (!/^[6-9]\d{9}$/.test(d.phone)) return fm('Enter a valid 10-digit mobile number starting with 6-9.', 'e');
+  if (d.password !== $('#p2').value) return fm('Passwords do not match.', 'e');
+
+  loading = true; render();
+  const res = await api('/api/auth/register', 'POST', d);
+  loading = false;
+
+  if (!res.ok) {
+    return fm(res.data.message || 'Registration failed.', 'e');
+  }
+
+  reg = { photo: '' };
+  authMode = 'login';
+  setMsg(res.data.message || 'Registration successful! Wait for the administrator to approve you as a voter, then sign in.', 's');
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const identifier = $('#r').value.trim();
+  const password = $('#p').value;
+
+  loading = true; render();
+  const res = await api('/api/auth/login', 'POST', { role: lrole, identifier, password });
+  loading = false;
+
+  if (!res.ok) {
+    return fm(res.data.message || 'Invalid credentials.', 'e');
+  }
+
+  token = res.data.token;
+  localStorage.setItem('vv_token', token);
+  session = res.data.user;
+
+  if (session.role === 'admin') {
+    area = 'admin'; page = 'over';
+  } else {
+    area = 'student'; page = 'home';
+  }
+  msg = null;
+  render();
+  loadPageData();
+}
+
+function logout() {
+  token = null;
+  session = null;
+  localStorage.removeItem('vv_token');
+  authMode = 'login';
+  area = 'student';
+  page = 'home';
+  msg = null;
+  render();
+}
+
+/* ---------- 5. STUDENT DASHBOARD & EDIT PROFILE ---------- */
+function stHome() {
+  const s = me();
+  return `<div class="grid"><div class="card" style="text-align:center">${av(s, 'lg')}<div style="margin:8px 0">${photoCtl(!!s.photo, 'student')}</div><h3>${esc(s.name)}</h3><span class="pill p-${s.approval_status}">${(s.approval_status || 'PENDING').toUpperCase()}</span>
+  <p class="mu">${{ pending: 'Waiting for administrator approval.', approved: 'You are a verified voter.', rejected: 'Your registration was rejected. Contact the election office.' }[s.approval_status] || ''}</p>${s.approval_status === 'approved' ? `<button onclick="go('voter','booth')">${I('voter', 18)}Go to voting booth</button>` : ''}</div>
+  <div class="card"><h3>Election</h3>${pill()}<p class="mu">${turnout()}</p><h3>Did I vote?</h3><div class="big">${s.has_voted ? '✅ Yes' : '❌ Not yet'}</div></div></div>
+  <div class="card"><h3>Posts &amp; Candidates</h3>${POSTS.map(p => `<div class="row"><b>${p.title}</b><span class="mu">${cands.filter(c => c.post_key === p.key).length} candidates</span></div>`).join('')}</div>`;
+}
+
+function stCands() {
+  return POSTS.map(p => `<div class="card"><h3>${p.title}</h3><div class="opts">${cands.filter(c => c.post_key === p.key).map(c => `<div class="card" style="margin:0"><b>${esc(c.name)}</b><div class="mu">${esc(c.department)}</div><p>“${esc(c.slogan)}”</p></div>`).join('') || '<p class="mu">No candidates registered for this post yet.</p>'}</div></div>`).join('');
+}
+
+function stProfile() {
+  const s = me(), ok = '<span class="pill p-approved">verified</span>';
+  if (editingProfile) return stEditProfileForm();
+
+  return `<div class="card" style="text-align:center">${av(s, 'lg')}<div style="margin-top:8px">${photoCtl(!!s.photo, 'student')}</div><div style="margin-top:12px"><button class="sec" onclick="editingProfile=true;render()">${I('edit', 16)} Edit Profile</button></div></div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="margin:0">Profile Details</h3><button class="sec" style="padding:5px 12px;font-size:13px" onclick="editingProfile=true;render()">${I('edit', 14)} Edit</button></div>
+  ${[
+    ['Full name', s.name],
+    ['Roll number (Locked)', `${s.roll_number} <span class="pill">Student ID</span>`],
+    ['Approval Status', `<span class="pill p-${s.approval_status}">${(s.approval_status || '').toUpperCase()}</span>`],
+    ['Vote Status', s.has_voted ? '<span class="pill p-approved">VOTED</span>' : '<span class="pill p-upcoming">NOT VOTED</span>'],
+    ['Department', s.department || 'Not specified'],
+    ['Class / Section', s.student_class || 'Not specified'],
+    ['Gender', s.gender === 'F' ? 'Female' : s.gender === 'M' ? 'Male' : (s.gender || 'Other')]
+  ].map(r => `<div class="row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}
+  <div class="row"><span>Email</span><b>${esc(s.email)} ${ok}</b></div>
+  <div class="row"><span>Mobile (+91)</span><b>+91 ${esc(s.phone)} ${ok}</b></div></div>`;
+}
+
+function stEditProfileForm() {
+  const s = me();
+  return `<div class="card"><h3>Edit Profile</h3><div id="fm">${M()}</div>
+  <form onsubmit="saveStudentProfile(event)">
+  <div class="card" style="background:var(--sel);padding:10px 14px;margin-bottom:14px">
+    <small class="mu"><b>Note:</b> Student Roll Number (${esc(s.roll_number)}) and Voter Approval Status (${esc(s.approval_status)}) are restricted account identifiers and cannot be altered.</small>
+  </div>
+  ${fld('en', 'Full name', 'user', s.name, 'text', 'required')}
+  ${fld('em', 'Mobile number (+91)', 'phone', s.phone, 'tel', 'required maxlength="10" inputmode="numeric"')}
+  ${fld('ed', 'Department', 'dept', s.department || '', 'text', 'required')}
+  ${fld('esc', 'Class / Section', 'id', s.student_class || '', 'text', 'placeholder="e.g. TY-CS-A"')}
+  <label>Gender</label><select id="eg"><option value="F" ${s.gender === 'F' ? 'selected' : ''}>Female</option><option value="M" ${s.gender === 'M' ? 'selected' : ''}>Male</option><option value="Other" ${s.gender === 'Other' ? 'selected' : ''}>Other</option></select>
+  <div style="display:flex;gap:10px;margin-top:14px">
+    <button type="button" class="sec" onclick="editingProfile=false;render()">Cancel</button>
+    <button class="ok">Save Changes</button>
+  </div></form></div>`;
+}
+
+async function saveStudentProfile(e) {
+  e.preventDefault();
+  const d = {
+    name: $('#en').value.trim(),
+    phone: $('#em').value.trim(),
+    department: $('#ed').value.trim(),
+    student_class: $('#esc').value.trim(),
+    gender: $('#eg').value
+  };
+
+  if (!/^[6-9]\d{9}$/.test(d.phone)) return fm('Enter a valid 10-digit mobile number starting with 6-9.', 'e');
+
+  const res = await api('/api/students/profile', 'PUT', d);
+  if (!res.ok) {
+    return fm(res.data.message || 'Could not update profile.', 'e');
+  }
+
+  session = res.data.profile;
+  editingProfile = false;
+  setMsg('Profile updated successfully!', 's');
+}
+
+/* ---------- 6. VOTER DASHBOARD (SECRET BALLOT) ---------- */
+function vBooth() {
+  const s = me();
+  const who = `<div class="card"><div class="row" style="border:0;justify-content:flex-start">${av(s, 'lg')}<div><b>${esc(s.name)}</b><div class="mu">Roll ${esc(s.roll_number)} · ${esc(s.department)}</div><span class="pill p-${s.approval_status}">${s.approval_status}</span></div></div></div>`;
+  if (receipt) return `${who}<div class="card"><h3>✅ Vote recorded</h3><p class="mu">Save this receipt ID to verify your ballot integrity in the blockchain-inspired hash chain:</p><p class="big"><code>${receipt}</code></p></div>`;
+  if (s.approval_status !== 'approved') return `${who}<div class="card"><h3>Not allowed</h3><p class="mu">Only admin-approved voters can cast a ballot.</p></div>`;
+  if (s.has_voted) return `${who}<div class="card"><h3>You have already voted</h3><p class="mu">One student, one vote. Your vote is securely recorded in the ballot chain.</p></div>`;
+  if (election.status !== 'open') return `${who}<div class="card"><h3>Voting is ${election.status === 'closed' ? 'closed' : 'not open yet'}</h3></div>`;
+  if (review) return `${who}<div class="card"><h3>Review your ballot</h3>${POSTS.map(p => `<div class="row"><span class="mu">${p.title}</span><b>${esc(candName(sel[p.key]))}</b></div>`).join('')}<p class="mu">Your vote is completely secret. Voter identity is never linked to ballot choices. You cannot change your vote after submitting.</p><button class="sec" onclick="review=false;render()">Back</button> <button class="ok" onclick="submitVote()">Confirm &amp; submit</button></div>`;
+
+  return who + POSTS.map(p => `<div class="card"><h3>${p.title}</h3><div class="opts">${cands.filter(c => c.post_key === p.key).map(c => `<button class="opt ${sel[p.key] === String(c.id) ? 'sel' : ''}" onclick="pick('${p.key}','${c.id}')">${esc(c.name)}<small>${esc(c.department)}</small></button>`).join('')}<button class="opt ${sel[p.key] === 'nota' ? 'sel' : ''}" onclick="pick('${p.key}','nota')">NOTA<small>None of the above</small></button></div></div>`).join('') + `<button ${POSTS.every(p => sel[p.key]) ? '' : 'disabled'} onclick="review=true;render()">Review ballot</button>`;
+}
+
+const pick = (p, id) => { sel[p] = String(id); render(); };
+
+async function submitVote() {
+  const s = me();
+  if (s.has_voted || election.status !== 'open' || s.approval_status !== 'approved') return;
+
+  const res = await api('/api/vote', 'POST', { selections: sel });
+  if (!res.ok) {
+    return setMsg(res.data.message || 'Could not cast vote.', 'e');
+  }
+
+  receipt = res.data.receipt;
+  session.has_voted = true;
+  sel = {};
+  setMsg('Ballot cast successfully!', 's');
+  loadElectionStatus();
+}
+
+function vVerify() {
+  return `<div class="card"><h3>Verify my receipt</h3><p class="mu">Enter your receipt code to verify that your ballot is part of the tamper-evident hash chain stored in MySQL.</p><input id="rc" placeholder="Receipt ID (e.g. 9F4A8B3C1E2D...)"><button onclick="checkReceipt()">Check</button></div>`;
+}
+
+async function checkReceipt() {
+  const v = $('#rc').value.trim();
+  if (v.length < 6) return setMsg('Please enter a valid receipt ID.', 'e');
+
+  const res = await api(`/api/vote/verify/${encodeURIComponent(v)}`, 'GET');
+  if (res.ok) {
+    setMsg(`✅ ${res.data.message} (Timestamp: ${new Date(res.data.timestamp).toLocaleString()})`, 's');
+  } else {
+    setMsg(res.data.message || 'Receipt not found.', 'e');
+  }
+}
+
+/* ---------- 7. RESULTS SCREEN (PROTECTED) ---------- */
+let electionResultsData = null;
+async function resultsScreen() {
+  if (election.status !== 'closed') {
+    return `<div class="card"><h3>Results not published yet</h3><p class="mu">Results are strictly sealed during voting and published automatically once the administrator closes the election.</p></div>`;
+  }
+
+  if (!electionResultsData) {
+    const res = await api('/api/election/results', 'GET');
+    if (res.ok) {
+      electionResultsData = res.data;
+    }
+  }
+
+  if (!electionResultsData || !electionResultsData.results) {
+    return `<div class="card"><h3>Loading results...</h3></div>`;
+  }
+
+  const d = electionResultsData;
+  return `<p class="mu">${d.totalVotes} total votes cast (${d.turnoutRate}% voter turnout)</p>${d.results.map(p => `
+    <div class="card"><h3>${p.postTitle}</h3>
+    ${p.candidates.map(c => `<div class="row" style="border:0;padding-bottom:0"><span>${esc(c.name)} ${c.isWinner ? '🏆 (Winner)' : ''}</span><b>${c.votes} (${c.percentage}%)</b></div><div class="bar"><i class="${c.isWinner ? 'w' : ''}" style="width:${c.percentage}%"></i></div>`).join('')}
+    <div class="mu">NOTA: ${p.nota.votes} (${p.nota.percentage}%)</div>
+    </div>
+  `).join('')}`;
+}
+
+/* ---------- 8. ADMIN DASHBOARD ---------- */
+let aiReport = null;
+
+function adOver() {
+  return `<div class="grid">${[
+    ['Registered Students', adminCounts.all || 0],
+    ['Pending Approvals', adminCounts.pending || 0],
+    ['Approved Voters', adminCounts.approved || 0],
+    ['Votes Cast', election.totalBallots || 0]
+  ].map(x => `<div class="card"><div class="mu">${x[0]}</div><div class="big">${x[1]}</div></div>`).join('')}</div>
+  <div class="card"><h3>Election control ${pill()}</h3>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="sec" onclick="setSt('upcoming')">Not started</button>
+    <button class="ok" onclick="setSt('open')">Open voting</button>
+    <button class="dng" onclick="setSt('closed')">Close &amp; publish</button>
+  </div></div>
+  <div class="card" id="aiCard"><h3>${I('brain', 20)} AI Anomaly &amp; Analytics Monitor</h3>
+    <div id="aiContent"><button class="sec" onclick="loadAIReport()">Run AI Integrity Scan</button></div>
+  </div>`;
+}
+
+async function loadAIReport() {
+  $('#aiContent').innerHTML = '<p class="mu">Analyzing voting velocities, entropy, and temporal clusters...</p>';
+  const res = await api('/api/ai/anomalies', 'GET');
+  if (res.ok) {
+    aiReport = res.data;
+    $('#aiContent').innerHTML = `
+      <div style="display:flex;gap:12px;align-items:center;margin:8px 0">
+        <span class="pill ${aiReport.riskLevel === 'LOW' ? 'p-approved' : 'p-rejected'}">Risk Level: ${aiReport.riskLevel}</span>
+        <b>Integrity Score: ${aiReport.integrityScore}%</b>
+      </div>
+      <p class="mu">${esc(aiReport.summary)}</p>
+      ${aiReport.anomalies.length ? `<h4>Detected Anomalies (${aiReport.anomalies.length})</h4>${aiReport.anomalies.map(a => `<div class="msg e" style="margin-bottom:6px"><b>[${a.severity}]</b> ${esc(a.description)}</div>`).join('')}` : '<div class="msg s">✔ No suspicious burst voting or automated patterns detected.</div>'}
+    `;
+  } else {
+    $('#aiContent').innerHTML = '<p class="mu">Could not load AI report.</p>';
+  }
+}
+
+async function setSt(s) {
+  const res = await api('/api/election/status', 'PUT', { status: s });
+  if (res.ok) {
+    election = res.data.election;
+    electionResultsData = null;
+    setMsg(`Election status set to "${s}".`, 's');
+  } else {
+    setMsg(res.data.message || 'Could not update status.', 'e');
+  }
+}
+
+// Candidates Tab
+function adCands() {
+  const lock = (election.totalBallots || 0) > 0;
+  return `<div class="card"><h3>Add candidate</h3>${lock ? '<p class="mu">Locked: voting has commenced.</p>' : `
+  <form onsubmit="addC(event)">
+  <label>Post</label><select id="cp">${POSTS.map(p => `<option value="${p.key}">${p.title}</option>`).join('')}</select>
+  <label>Name</label><input id="cn" required>
+  <label>Department</label><input id="cd" required>
+  <label>Slogan</label><input id="cs" required>
+  <button>Add</button></form>`}</div>
+  <div class="card">${cands.map(c => `<div class="row"><span>${esc(c.name)} <span class="mu">– ${POSTS.find(p => p.key === c.post_key)?.title || c.post_key}</span></span>${lock ? '' : `<button class="dng" onclick="delC('${c.id}')">Remove</button>`}</div>`).join('') || '<p class="mu">No candidates yet.</p>'}</div>`;
+}
+
+async function addC(e) {
+  e.preventDefault();
+  const d = { post_key: $('#cp').value, name: $('#cn').value.trim(), department: $('#cd').value.trim(), slogan: $('#cs').value.trim() };
+  const res = await api('/api/candidates', 'POST', d);
+  if (res.ok) {
+    setMsg('Candidate added successfully.', 's');
+    loadCandidates();
+  } else {
+    setMsg(res.data.message || 'Could not add candidate.', 'e');
+  }
+}
+
+async function delC(id) {
+  const res = await api(`/api/candidates/${id}`, 'DELETE');
+  if (res.ok) {
+    setMsg('Candidate removed.', 's');
+    loadCandidates();
+  } else {
+    setMsg(res.data.message || 'Could not remove candidate.', 'e');
+  }
+}
+
+// Students Tab (with Improved Selection Control in Top-Right Corner)
+function adStud() {
+  const list = adminStudents;
+  const n = chosen.size;
+  const allFilteredSelected = list.length > 0 && list.every(s => chosen.has(s.roll_number));
+
+  const chips = ['all', 'pending', 'approved', 'rejected'].map(k =>
+    `<button class="${flt === k ? '' : 'sec'}" onclick="flt='${k}';chosen.clear();loadAdminStudents()">${k[0].toUpperCase() + k.slice(1)} (${adminCounts[k] || 0})</button>`
+  ).join('');
+
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+      <div class="tabs" style="margin:0">${chips}</div>
+      <!-- TOP-RIGHT SELECTION CONTROL -->
+      <div style="display:flex;align-items:center;gap:10px">
+        <label class="chk" style="background:var(--sel);padding:6px 12px;border-radius:8px;cursor:pointer">
+          <input type="checkbox" id="topSelectAll" ${allFilteredSelected ? 'checked' : ''} onchange="selAll(this.checked)">
+          <b style="color:var(--ac);font-size:13px">Select All (${list.length})</b>
+        </label>
+        <button class="sec" style="padding:6px 10px;font-size:12px" onclick="chosen.clear();render()" ${n ? '' : 'disabled'}>Clear</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <input id="studSearch" placeholder="🔍 Search students by name, roll number, or department..." value="${esc(searchQuery)}" oninput="handleSearch(this.value)">
+    </div>
+
+    <!-- BULK ACTIONS ACTION BAR (visible when items selected) -->
+    <div class="row" style="background:var(--sel);border-radius:10px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--bd)">
+      <span><b>${n}</b> student(s) selected</span>
+      <span style="display:flex;gap:8px">
+        <button class="ok" ${n ? '' : 'disabled'} onclick="confirmBulk('approved')">Approve (${n})</button>
+        <button class="dng" ${n ? '' : 'disabled'} onclick="confirmBulk('rejected')">Reject (${n})</button>
+      </span>
+    </div>
+
+    <!-- STUDENT LIST -->
+    ${list.map(s => `<div class="row"><label class="chk"><input type="checkbox" ${chosen.has(s.roll_number) ? 'checked' : ''} onchange="tgl('${s.roll_number}')">${av(s)}</label>
+      <div style="flex:1;min-width:170px"><b>${esc(s.name)}</b> <span class="pill p-${s.approval_status}">${s.approval_status}</span>${s.has_voted ? ' <span class="pill">voted</span>' : ''}<div class="mu">${esc(s.roll_number)} · ${s.gender === 'F' ? 'F' : 'M'} · ${esc(s.department || '')} ${s.student_class ? '(' + esc(s.student_class) + ')' : ''}<br>${esc(s.email)} · +91 ${esc(s.phone || '')}</div></div>
+      <span>
+        ${s.approval_status !== 'approved' ? `<button class="ok" onclick="setStu('${s.roll_number}','approved')">Approve</button> ` : ''}
+        ${s.approval_status !== 'rejected' ? `<button class="dng" onclick="setStu('${s.roll_number}','rejected')">Reject</button> ` : ''}
+        <label class="btnl" title="Upload student photo">${I('camera', 16)}<input type="file" accept="image/*" hidden onchange="adUploadPhoto('${s.roll_number}',this)"></label>
+      </span></div>`).join('') || '<p class="mu">No students matching the current filter/search.</p>'}
+  </div>`;
+}
+
+function handleSearch(q) {
+  searchQuery = q;
+  clearTimeout(window._searchTimer);
+  window._searchTimer = setTimeout(() => {
+    loadAdminStudents();
+  }, 300);
+}
+
+const tgl = r => { chosen.has(r) ? chosen.delete(r) : chosen.add(r); render(); };
+const selAll = on => {
+  adminStudents.forEach(s => on ? chosen.add(s.roll_number) : chosen.delete(s.roll_number));
+  render();
+};
+
+function confirmBulk(v) {
+  const n = chosen.size;
+  if (!n) return;
+  confirmModal = {
+    title: `Confirm Bulk ${v === 'approved' ? 'Approval' : 'Rejection'}`,
+    text: `Are you sure you want to mark ${n} selected student registration(s) as "${v}"?`,
+    onConfirm: () => executeBulk(v)
+  };
+  renderModal();
+}
+
+async function executeBulk(status) {
+  const roll_numbers = Array.from(chosen);
+  const res = await api('/api/admin/students/bulk-status', 'POST', { roll_numbers, status });
+  if (res.ok) {
+    chosen.clear();
+    setMsg(res.data.message, 's');
+    loadAdminStudents();
+  } else {
+    setMsg(res.data.message || 'Bulk operation failed.', 'e');
+  }
+}
+
+async function setStu(roll, status) {
+  const res = await api(`/api/admin/students/${roll}/status`, 'PUT', { status });
+  if (res.ok) {
+    setMsg(res.data.message, 's');
+    loadAdminStudents();
+  } else {
+    setMsg(res.data.message || 'Status update failed.', 'e');
+  }
+}
+
+async function adUploadPhoto(roll, i) {
+  try {
+    const photo = await resize(i.files[0]);
+    const res = await api('/api/admin/photo', 'PUT', { target: 'student', id: roll, photo });
+    if (res.ok) {
+      setMsg('Student photo updated.', 's');
+      loadAdminStudents();
+    } else {
+      setMsg(res.data.message || 'Failed to update photo.', 'e');
+    }
+  } catch (e) { setMsg('Please choose an image under 8 MB.', 'e'); }
+}
+
+const adAv = (cls = '') => session && session.photo ? `<img class="av ${cls}" src="${session.photo}" alt="Admin">` : `<span class="av ${cls}">${I('admin', cls ? 44 : 22)}</span>`;
+const photoCtl = (has, who) => `<label class="btnl">${I('camera', 16)}${has ? 'Change photo' : 'Upload photo'}<input type="file" accept="image/*" hidden onchange="uploadMyPhoto(this)"></label>${has ? ` <button class="sec" onclick="removeMyPhoto()">Remove</button>` : ''}`;
+
+async function uploadMyPhoto(i) {
+  try {
+    const photo = await resize(i.files[0]);
+    const endpoint = session.role === 'admin' ? '/api/admin/photo' : '/api/students/photo';
+    const payload = session.role === 'admin' ? { target: 'admin', photo } : { photo };
+    const res = await api(endpoint, 'PUT', payload);
+    if (res.ok) {
+      session.photo = photo;
+      setMsg('Photo updated.', 's');
+    } else {
+      setMsg(res.data.message || 'Failed to update photo.', 'e');
+    }
+  } catch (e) { setMsg('Please choose an image under 8 MB.', 'e'); }
+}
+
+async function removeMyPhoto() {
+  const endpoint = session.role === 'admin' ? '/api/admin/photo' : '/api/students/photo';
+  const payload = session.role === 'admin' ? { target: 'admin', photo: null } : { photo: null };
+  const res = await api(endpoint, 'PUT', payload);
+  if (res.ok) {
+    session.photo = null;
+    setMsg('Photo removed.', 's');
+  }
+}
+
+function adRes() {
+  return `<p class="mu">${turnout()}</p>${resultsScreen()}<div style="margin-top:16px"><button class="sec" onclick="runVerify()">${I('lock', 16)} Verify ballot hash chain</button></div>`;
+}
+
+async function runVerify() {
+  const res = await api('/api/election/verify-chain', 'GET');
+  if (res.ok) {
+    setMsg(`✅ ${res.data.message}`, 's');
+  } else {
+    setMsg(`❌ ${res.data.message || 'Chain verification failed!'}`, 'e');
+  }
+}
+
+function adSec() {
+  return `<div class="card" style="text-align:center"><h3>Admin profile photo</h3>${adAv('lg')}<div style="margin-top:8px">${photoCtl(!!(session && session.photo), 'admin')}</div></div>
+  <div class="card"><h3>Change admin password</h3><form onsubmit="chPw(event)">${fld('np', 'New password (min 8)', 'lock', '', 'password', 'required minlength="8"', true)}<button>Update password</button></form></div>
+  <div class="card"><h3>Reset election</h3><p class="mu">Purges all ballots from MySQL database and resets voter flags to 'not voted'.</p><button class="dng" onclick="resetE()">Reset Election</button></div>
+  <div class="card"><h3>Audit Logs</h3><div id="auditLogList"><button class="sec" onclick="loadAuditLogs()">View Recent Admin Logs</button></div></div>`;
+}
+
+async function chPw(e) {
+  e.preventDefault();
+  const np = $('#np').value;
+  const res = await api('/api/auth/admin/change-password', 'POST', { new_password: np });
+  if (res.ok) {
+    setMsg('Password updated successfully.', 's');
+    $('#np').value = '';
+  } else {
+    setMsg(res.data.message || 'Password update failed.', 'e');
+  }
+}
+
+async function resetE() {
+  confirmModal = {
+    title: 'Confirm Full Election Reset',
+    text: 'Are you sure you want to permanently delete all ballots and reset all voting records? This action cannot be undone.',
+    onConfirm: async () => {
+      const res = await api('/api/admin/reset-election', 'POST', { confirmation: 'RESET_ALL_BALLOTS' });
+      if (res.ok) {
+        setMsg('Election reset successfully.', 's');
+        loadElectionStatus();
+        loadAdminStudents();
+      } else {
+        setMsg(res.data.message || 'Reset failed.', 'e');
+      }
+    }
+  };
+  renderModal();
+}
+
+async function loadAuditLogs() {
+  $('#auditLogList').innerHTML = '<p class="mu">Fetching audit logs...</p>';
+  const res = await api('/api/admin/audit-logs', 'GET');
+  if (res.ok && res.data.logs) {
+    $('#auditLogList').innerHTML = res.data.logs.slice(0, 15).map(l => `
+      <div class="row" style="font-size:13px">
+        <div><b>${esc(l.action)}</b> <span class="mu">by ${esc(l.admin_name || 'Admin')} (${esc(l.ip_address || '')})</span><br><small class="mu">${esc(JSON.stringify(l.details || {}))}</small></div>
+        <span class="mu">${new Date(l.created_at).toLocaleString()}</span>
+      </div>
+    `).join('') || '<p class="mu">No audit logs recorded yet.</p>';
+  } else {
+    $('#auditLogList').innerHTML = '<p class="mu">Failed to load audit logs.</p>';
+  }
+}
+
+/* ---------- 9. DATA LOADING & LIFECYCLE ---------- */
+async function loadElectionStatus() {
+  const res = await api('/api/election/status', 'GET');
+  if (res.ok) {
+    election = res.data.election;
+    render();
+  }
+}
+
+async function loadCandidates() {
+  const res = await api('/api/candidates', 'GET');
+  if (res.ok) {
+    POSTS = res.data.posts || [];
+    cands = res.data.candidates || [];
+    render();
+  }
+}
+
+async function loadAdminStudents() {
+  if (!session || session.role !== 'admin') return;
+  const q = new URLSearchParams({ status: flt });
+  if (searchQuery.trim()) q.append('search', searchQuery.trim());
+  const res = await api(`/api/admin/students?${q.toString()}`, 'GET');
+  if (res.ok) {
+    adminStudents = res.data.students || [];
+    adminCounts = res.data.counts || adminCounts;
+    render();
+  }
+}
+
+function loadPageData() {
+  loadElectionStatus();
+  loadCandidates();
+  if (session && session.role === 'admin' && page === 'stud') {
+    loadAdminStudents();
+  }
+}
+
+// Initial App Startup
+(async () => {
+  if (token) {
+    const res = await api('/api/auth/me', 'GET');
+    if (res.ok && res.data.user) {
+      session = res.data.user;
+      area = session.role === 'admin' ? 'admin' : 'student';
+      page = session.role === 'admin' ? 'over' : 'home';
+    } else {
+      token = null;
+      session = null;
+      localStorage.removeItem('vv_token');
+    }
+  }
+  render();
+  loadPageData();
+})();
+</script></body></html>
